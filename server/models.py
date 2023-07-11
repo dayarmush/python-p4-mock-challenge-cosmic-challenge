@@ -42,7 +42,17 @@ class Scientist(db.Model, SerializerMixin):
     # Add serialization rules
     serialize_rules = ('-missions.scientist',)
     # Add validation
-
+    @validates('name')
+    def validate_name(self, key, name):
+        if not name:
+            raise ValueError('Must have name')
+        return name
+    
+    @validates('field_of_study')
+    def validate_field(self, key, field):
+        if not field:
+            raise ValueError('must input field')
+        return field
 
 class Mission(db.Model, SerializerMixin):
     __tablename__ = 'missions'
