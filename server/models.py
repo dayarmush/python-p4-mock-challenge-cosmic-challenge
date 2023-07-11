@@ -35,14 +35,14 @@ class Scientist(db.Model, SerializerMixin):
     __tablename__ = 'scientists'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     field_of_study = db.Column(db.String)
 
     # Add relationship
     missions = db.relationship('Mission', backref='scientist', cascade='all, delete-orphan')
 
     # Add serialization rules
-    serialize_rules = ('-missions.scientist',)
+    serialize_rules = ('-missions.scientist', '-scientist.missions')
 
     # Add validation
     @validates('name')
@@ -72,19 +72,19 @@ class Mission(db.Model, SerializerMixin):
 
     # Add validation
     @validates('name')
-    def validate_missions(self, key, name):
+    def validate_name(self, key, name):
         if not name:
             raise ValueError('must have name')
         return name
     
     @validates('scientist_id')
-    def validate_missions(self, key, scientist):
+    def validate_scientist(self, key, scientist):
         if not scientist:
             raise ValueError('must have scientist id')
         return scientist
     
     @validates('planet_id')
-    def validate_missions(self, key, planet):
+    def validate_planet(self, key, planet):
         if not planet:
             raise ValueError('must have planet id')
         return planet
