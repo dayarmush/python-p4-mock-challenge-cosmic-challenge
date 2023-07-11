@@ -26,9 +26,9 @@ class Planet(db.Model, SerializerMixin):
     nearest_star = db.Column(db.String)
 
     # Add relationship
-
+    missions = db.relationship('Mission', backref='planet', cascade='all, delete-orphan')
     # Add serialization rules
-
+    serialize_rules = ('-missions.planet',)
 
 class Scientist(db.Model, SerializerMixin):
     __tablename__ = 'scientists'
@@ -38,9 +38,9 @@ class Scientist(db.Model, SerializerMixin):
     field_of_study = db.Column(db.String)
 
     # Add relationship
-
+    missions = db.relationship('Mission', backref='scientist', cascade='all, delete-orphan')
     # Add serialization rules
-
+    serialize_rules = ('-missions.scientist',)
     # Add validation
 
 
@@ -51,9 +51,10 @@ class Mission(db.Model, SerializerMixin):
     name = db.Column(db.String)
 
     # Add relationships
-
+    scientist_id = db.Column(db.Integer, db.ForeignKey('scientists.id'))
+    planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
     # Add serialization rules
-
+    serialize_rules = ('-scientist.missions', '-planet.missions')
     # Add validation
 
 
